@@ -22,7 +22,11 @@ const defaultUsers = [
 function loadDatabase() {
   if (!fs.existsSync(DB_FILE)) {
     const initialState = { docs: initialDocs, users: defaultUsers };
-    fs.writeFileSync(DB_FILE, JSON.stringify(initialState, null, 2), 'utf-8');
+    try {
+      fs.writeFileSync(DB_FILE, JSON.stringify(initialState, null, 2), 'utf-8');
+    } catch (e) {
+      console.warn('Could not write initial database file, using in-memory state.', e.message);
+    }
     return initialState;
   }
 
@@ -36,7 +40,11 @@ function loadDatabase() {
 }
 
 function saveDatabase(data) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (e) {
+    console.warn('Could not save to database file, changes will be lost after restart.', e.message);
+  }
 }
 
 const db = loadDatabase();
